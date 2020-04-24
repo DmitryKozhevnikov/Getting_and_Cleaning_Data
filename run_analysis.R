@@ -11,7 +11,8 @@
 #    of each variable for each activity and each subject.
 
 # Loading Packages for the data tidying and setting the work direcory:
-library(tidyverse)
+library(dplyr)
+library(tidyr)
 wdir <- getwd()
 
 # Loading and getting the Data:
@@ -20,24 +21,31 @@ download.file(url_dat, file.path(wdir, "Data.zip"))
 unzip("Data.zip")
 
 # Loading the features and labels data:
-feature <- data.table::fread(file.path(wdir, "UCI HAR Dataset", "features.txt"), col.names = c("ID", "featureName"))
-labels <- data.table::fread(file.path(wdir, "UCI HAR Dataset", "activity_labels.txt"), col.names = c("activityClass", "activityName"))
+feature <- read.table(file.path(wdir, "UCI HAR Dataset", "features.txt"), col.names = c("ID", "featureName"), stringsAsFactors = FALSE)
+labels <- read.table(file.path(wdir, "UCI HAR Dataset", "activity_labels.txt"), col.names = c("activityClass", "activityName"), stringsAsFactors = FALSE)
 
 # Loading the training data:
-trainSet <- data.table::fread(file.path(wdir, "UCI HAR Dataset", "train", "X_train.txt"), col.names = feature$featureName)
-trainLabels <- data.table::fread(file.path(wdir, "UCI HAR Dataset", "train", "y_train.txt"), col.names = "activityClass")
-trainSubject <- data.table::fread(file.path(wdir, "UCI HAR Dataset", "train", "subject_train.txt"), col.names = "subjectID")
+trainSet <- read.table(file.path(wdir, "UCI HAR Dataset", "train", "X_train.txt"), col.names = feature$featureName, stringsAsFactors = FALSE)
+trainLabels <- read.table(file.path(wdir, "UCI HAR Dataset", "train", "y_train.txt"), col.names = "activityClass", stringsAsFactors = FALSE)
+trainSubject <- read.table(file.path(wdir, "UCI HAR Dataset", "train", "subject_train.txt"), col.names = "subjectID", stringsAsFactors = FALSE)
 trainData <- cbind(trainLabels, trainSubject, trainSet)
 
 # Loading the test data:
-testSet <- data.table::fread(file.path(wdir, "UCI HAR Dataset", "test", "X_test.txt"), col.names = feature$featureName)
-testLabels <- data.table::fread(file.path(wdir, "UCI HAR Dataset", "test", "y_test.txt"), col.names = "activityClass")
-testSubject <- data.table::fread(file.path(wdir, "UCI HAR Dataset", "test", "subject_test.txt"), col.names = "subjectID")
+testSet <- read.table(file.path(wdir, "UCI HAR Dataset", "test", "X_test.txt"), col.names = feature$featureName, stringsAsFactors = FALSE)
+testLabels <- read.table(file.path(wdir, "UCI HAR Dataset", "test", "y_test.txt"), col.names = "activityClass", stringsAsFactors = FALSE)
+testSubject <- read.table(file.path(wdir, "UCI HAR Dataset", "test", "subject_test.txt"), col.names = "subjectID", stringsAsFactors = FALSE)
 testData <- cbind(testLabels, testSubject, testSet)
 
 # Merding the training and test datasets:
-joinData <- rbind(trainData, testData)
+joinedData <- rbind(trainData, testData)
+joinedData <- joinData[,c(1,2, grep("mean | std"), names(joinData))]
 
-# Extracting the measurements on the mean and standard deviation for each measurement
+# Adding the activity label to joined data i.e. merging the "joinedData" and "labels"
+completeData <- merge(labels, joinData, by = "activityClass", all.y = TRUE)
+
+# Tidying the final data
+completeData <- tbl_df(completeData) %>%
+        select(-1) %>%
+        gather(key = "featureName", value = "measurements", -activityName, -subjectID)
 
 
