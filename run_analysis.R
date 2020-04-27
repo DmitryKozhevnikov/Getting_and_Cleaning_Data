@@ -1,5 +1,5 @@
 # Author: Dmitry Kozhevnikov
-# Data: 22.04.2020
+# Data: 27.04.2020
 # Getting and Cleaning Data Project. John Hopkins University
 
 # Program Description
@@ -38,14 +38,15 @@ testData <- cbind(testLabels, testSubject, testSet)
 
 # Merding the training and test datasets:
 joinedData <- rbind(trainData, testData)
-joinedData <- joinData[,c(1,2, grep("mean | std"), names(joinData))]
+joinedData <- joinedData[, c(1,2, grep("mean|std", names(joinedData)))]
 
 # Adding the activity label to joined data i.e. merging the "joinedData" and "labels"
-completeData <- merge(labels, joinData, by = "activityClass", all.y = TRUE)
+completeData <- merge(labels, joinedData, by = "activityClass", all.y = TRUE)
 
 # Tidying the final data
 completeData <- tbl_df(completeData) %>%
         select(-1) %>%
         gather(key = "featureName", value = "measurements", -activityName, -subjectID)
 
-
+# Saving the tidy Data in a txt file:
+write.table(completeData, file = "tidy_data.txt", sep = " ", row.names = FALSE)
