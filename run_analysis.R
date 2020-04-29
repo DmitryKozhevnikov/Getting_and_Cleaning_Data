@@ -1,5 +1,5 @@
 # Author: Dmitry Kozhevnikov
-# Data: 27.04.2020
+# Data: 29.04.2020
 # Getting and Cleaning Data Project. John Hopkins University
 
 # Program Description
@@ -46,7 +46,11 @@ completeData <- merge(labels, joinedData, by = "activityClass", all.y = TRUE)
 # Tidying the final data
 completeData <- tbl_df(completeData) %>%
         select(-1) %>%
-        gather(key = "featureName", value = "measurements", -activityName, -subjectID)
+        gather(key = "featureName", value = "signalValue", -activityName, -subjectID)
 
 # Saving the tidy Data in a txt file:
 write.table(completeData, file = "tidy_data.txt", sep = " ", row.names = FALSE)
+
+# Removing objects from an Environment
+rm(feature, labels, trainSet, trainLabels, trainSubject, trainData, testSet, 
+   testLabels, testData, testSubject, joinedData, completeData, wdir, url_dat)

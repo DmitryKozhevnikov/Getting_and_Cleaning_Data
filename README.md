@@ -1,7 +1,7 @@
 ---
 title: "Getting and Cleaning Data Course Project"
 author: "Dmitry Kozhevnikov"
-date: "21.04.2020"
+date: "29.04.2020"
 ---
 
 ## The Purpose of the Project
