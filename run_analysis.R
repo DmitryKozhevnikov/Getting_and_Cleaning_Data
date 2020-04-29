@@ -48,8 +48,13 @@ completeData <- tbl_df(completeData) %>%
         select(-1) %>%
         gather(key = "featureName", value = "signalValue", -activityName, -subjectID)
 
+# Creating an additional tidy dataset with the average of each variable for each activity and each subject 
+summaryData <- completeData %>%
+        group_by(activityName, featureName) %>%
+        summarize(Value = mean(signalValue))
+
 # Saving the tidy Data in a txt file:
-write.table(completeData, file = "tidy_data.txt", sep = " ", row.names = FALSE)
+write.table(completeData, file = "tidy_data.txt", sep = " ", row.name = FALSE)
 
 # Removing objects from an Environment
 rm(feature, labels, trainSet, trainLabels, trainSubject, trainData, testSet, 

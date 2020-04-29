@@ -127,3 +127,5 @@ The sensor signals (accelerometer and gyroscope) were pre-processed by applying 
 6. Extracts the measurements on the mean and standard deviation for each measurement
 7. Adding the activity label to joined data i.e. merging the "joinedData" and "labels"
 8. Tidying the final data using Tidyr Package
+9. Creating an additional tidy dataset with the average of each variable for each activity and each subject
+10. Saving the tidy Data in a txt file
